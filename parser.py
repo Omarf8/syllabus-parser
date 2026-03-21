@@ -19,4 +19,5 @@ response = client.models.generate_content(
 
 json_list_raw_text = response.text
 json_list_text = json_list_raw_text.replace("```json", "").replace("```", "") # Potential md stripping
-print(json_list_text)
+json_py = json.loads(json_list_text)
+print(json_py)
