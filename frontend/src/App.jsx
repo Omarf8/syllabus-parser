@@ -23,18 +23,26 @@ function App() {
   }
 
   return (
-    <>
-      <div>
-        <label htmlFor="upload">Click here to upload</label>
-        <input ref={submission} type="file" id="upload"/>
-        <button onClick={processFile}>Confirm</button>
-
-        {data && 
-          data.map((s, index) => (
-            <p key={index}>Title: {s.title}, Type: {s.type}, Date: {s.date}, Course: {s.course}</p>
-          ))}
+    <div className="syllabus-file">
+      <div className="syllabus-upload">
+        <div className="column-format">
+          <p>Upload A School Syllabus To Extract Important Dates</p>
+          <input ref={submission} type="file" id="upload"/>
+          <button onClick={processFile}>Confirm</button>
+        </div>
       </div>
-    </>
+      <div className="parsed-results">
+        <div className="results-box">
+          {data ?
+          data && 
+            data.map((s, index) => (
+              <p key={index}>Title: {s.title}, Type: {s.type}, Date: {s.date}, Course: {s.course}</p>
+          )) 
+          :
+          <p>Parsed Results Will Be Shown Here</p>}
+        </div>
+      </div>
+    </div>
   )
 }
 
