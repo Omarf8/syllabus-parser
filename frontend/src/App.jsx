@@ -4,11 +4,18 @@ import './App.css'
 function App() {
   const [count, setCount] = useState(0)
   const [data, setData] = useState(null)
+  const [fileMissing, setMissing] = useState(false)
   const submission = useRef(null)
 
   const processFile = async () => {
     const file = submission.current.files[0]
+    // Prevent pressing confirm before uploading file
+    if(!file) {
+      setMissing(true)
+      return
+    }
 
+    setMissing(false)
     const formData = new FormData()
     formData.append("file", file)
 
@@ -17,17 +24,18 @@ function App() {
       body: formData
     })
 
-    const data = await response.json()
+    const parsedData = await response.json()
 
-    setData(data)
+    setData(parsedData)
   }
 
   return (
     <div className="syllabus-file">
       <div className="syllabus-upload">
         <div className="column-format">
+          {fileMissing && <p className="file-missing">(Missing File)</p>}
           <p>Upload A School Syllabus To Extract Important Dates</p>
-          <input ref={submission} type="file" id="upload"/>
+          <input ref={submission} type="file" id="upload" onChange={() => setMissing(false)}/>
           <button onClick={processFile}>Confirm</button>
         </div>
       </div>
