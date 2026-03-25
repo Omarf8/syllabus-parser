@@ -1,7 +1,7 @@
 # Items to Revisit
 
 ## Error Handling
-* Gemini returning a 503 or other server error
+* ~~Gemini returning a 503 or other server error~~
 * JSON parsing failing if Gemini returns unexpected output
 * Scanned PDFs (non-extractable text)
 * User uploading non-PDF files
