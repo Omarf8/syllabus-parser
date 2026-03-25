@@ -2,9 +2,9 @@ import { useState, useRef } from 'react'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
   const [data, setData] = useState(null)
   const [fileMissing, setMissing] = useState(false)
+  const [error, setError] = useState(null)
   const submission = useRef(null)
 
   const processFile = async () => {
@@ -24,6 +24,13 @@ function App() {
       body: formData
     })
 
+    if(!response.ok) {
+      setError(true)
+      return
+    }
+
+    setError(false)
+
     const parsedData = await response.json()
 
     setData(parsedData)
@@ -33,7 +40,7 @@ function App() {
     <div className="syllabus-file">
       <div className="syllabus-upload">
         <div className="column-format">
-          {fileMissing && <p className="file-missing">(Missing File)</p>}
+          {fileMissing && <p className="red-text">(Missing File)</p>}
           <p>Upload A School Syllabus To Extract Important Dates</p>
           <input ref={submission} type="file" id="upload" onChange={() => setMissing(false)}/>
           <button onClick={processFile}>Confirm</button>
@@ -41,6 +48,7 @@ function App() {
       </div>
       <div className="parsed-results">
         <div className="results-box">
+          {error && <p className="red-text">Something went wrong, please try again later.</p>}
           {data ?
           data && 
             data.map((s, index) => (
