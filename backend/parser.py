@@ -5,10 +5,14 @@ import io
 from google import genai
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from google_auth_oauthlib.flow import Flow
 
 load_dotenv()
 
+SCOPES = ["https://www.googleapis.com/auth/calendar.events"] # Google Calendar Scope
+
 app = FastAPI()
+oauth_states = set()
 
 origins = [
     "http://localhost:5173",
@@ -43,3 +47,10 @@ async def parse_syllabus(file: UploadFile):
     gemini_text = response.text
     json_text = gemini_text.replace("```json", "").replace("```", "") # Potential md stripping
     return json.loads(json_text)
+
+@app.get("/auth/login/")
+def login_auth():
+    flow = Flow.from_client_secrets_file("credentials.json", scopes=SCOPES, redirect_uri="http://localhost:8000/auth/callback")
+    url, state = flow.authorization_url()
+    oauth_states.add(state)
+    return {"url": url}
