@@ -50,7 +50,7 @@ async def parse_syllabus(file: UploadFile):
     return json.loads(json_text)
 
 @app.get("/auth/login/")
-def login_auth():
+def auth_login():
     flow = Flow.from_client_secrets_file("credentials.json", scopes=SCOPES, redirect_uri="http://localhost:8000/auth/callback")
     url, state = flow.authorization_url()
     oauth_states.add(state)
@@ -70,3 +70,7 @@ def auth_callback(code: str, state: str):
 
     oauth_states.discard(state)
     return RedirectResponse("http://127.0.0.1:5173") 
+
+@app.get("/auth/status/")
+def auth_status():
+    return {"authenticated": os.path.isfile("user.txt")}
