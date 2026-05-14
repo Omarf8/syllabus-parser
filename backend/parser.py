@@ -6,6 +6,7 @@ from google import genai
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from google_auth_oauthlib.flow import Flow
+from fastapi.response import RedirectResponse
 
 load_dotenv()
 
@@ -54,3 +55,18 @@ def login_auth():
     url, state = flow.authorization_url()
     oauth_states.add(state)
     return {"url": url}
+
+@app.get("/auth/callback/")
+def auth_callback(code: str, state: str):
+    if state not in oauth_states:
+        return {"Error": "Unknown Login Attempt"}
+
+    flow = Flow.from_client_secrets_file("credentials.json", scopes=SCOPES, redirect_uri="http://localhost:8000/auth/callback")
+    flow.fetch_token(code=code)
+    creds = flow.credentials
+
+    with open("user.txt", 'w') as f:
+        f.write(creds.to_json())
+
+    oauth_states.discard(state)
+    return RedirectResponse("http://127.0.0.1:5173") 
